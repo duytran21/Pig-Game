@@ -11,7 +11,7 @@ GAME RULES:
 
 
 
-var scores, roundScore, activePlayer, diceDOM, gameState;
+var scores, roundScore, activePlayer, diceDOM, gameState, lastDice;
 
 //Initialize Game var with init function here
 init();
@@ -25,18 +25,27 @@ document.querySelector('.btn-roll').addEventListener('click', function(){
 	if (gameState){
 		//1. Get Random number
 		var dice = Math.floor(Math.random() * 6) + 1;
+		var prevDice;
 		//2. Display dice base on dice number
 		diceDOM.style.display = 'block';
 		diceDOM.src = 'dice-' + dice + '.png';
 
 		//3. Add to Round Score if player click is not hit 1
-		if (dice !== 1){
+
+		if (dice === 6 && lastDice === 6){
+			scores[activePlayer] = 0;
+			document.getElementById('score-' + activePlayer ).textContent = '0';
+			nextPlayer();
+		}
+		else if (dice !== 1){
 			roundScore += dice;
 			document.getElementById('current-' + activePlayer).textContent = roundScore;
 			
 		} else {
 			nextPlayer();
 		}
+
+		lastDice = dice;
 	}
 });
 
@@ -49,7 +58,7 @@ document.querySelector('.btn-hold').addEventListener('click', function(){
 		document.getElementById('score-' + activePlayer).textContent = scores[activePlayer];
 
 		//3. Checking Winner
-		if (scores[activePlayer] >= 20){
+		if (scores[activePlayer] >= 100){
 			document.getElementById('name-' + activePlayer).textContent = 'Winner!';
 			document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
 			gameState = false;
